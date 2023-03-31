@@ -3,14 +3,15 @@ import "@material/web/iconbutton/filled-icon-button";
 import { mdiCheck, mdiClose } from "@mdi/js";
 import { css, CSSResultGroup, html, LitElement, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
-import { fireEvent } from "../../../../common/dom/fire_event";
-import "../../../../components/ha-button";
-import "../../../../components/ha-control-button";
-import { createCloseHeading } from "../../../../components/ha-dialog";
-import "../../../../components/ha-textfield";
-import type { HaTextField } from "../../../../components/ha-textfield";
-import { HomeAssistant } from "../../../../types";
-import { HassDialog } from "../../../make-dialog-manager";
+import { ifDefined } from "lit/directives/if-defined";
+import { fireEvent } from "../../common/dom/fire_event";
+import "../../components/ha-button";
+import "../../components/ha-control-button";
+import { createCloseHeading } from "../../components/ha-dialog";
+import "../../components/ha-textfield";
+import type { HaTextField } from "../../components/ha-textfield";
+import { HomeAssistant } from "../../types";
+import { HassDialog } from "../make-dialog-manager";
 import { EnterCodeDialogParams } from "./show-enter-code-dialog";
 
 const BUTTONS = [
@@ -73,7 +74,8 @@ export class DialogEnterCode
   }
 
   private _inputValueChange(e) {
-    const val = (e.currentTarget! as any).value;
+    const field = e.currentTarget as HaTextField;
+    const val = field.value;
     this._showClearButton = !!val;
   }
 
@@ -99,6 +101,7 @@ export class DialogEnterCode
             id="code"
             .label=${this.hass.localize("ui.dialogs.enter_code.input_label")}
             type="password"
+            pattern=${ifDefined(this._dialogParams.codePattern)}
             input-mode="text"
           ></ha-textfield>
           <ha-button @click=${this.closeDialog} slot="secondaryAction">
